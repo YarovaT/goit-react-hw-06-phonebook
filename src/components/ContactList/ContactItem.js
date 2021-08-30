@@ -20,11 +20,8 @@ const ContactItem = ({ name, number, onClick }) => {
   const classes = useStyles();
 
   return (
-    <li>
-      <p>
-        {name}: {number}
-      </p>
-
+    <>
+      {name}: {number}
       <Button
         type="button"
         variant="contained"
@@ -35,7 +32,7 @@ const ContactItem = ({ name, number, onClick }) => {
       >
         Delete
       </Button>
-    </li>
+    </>
   );
 };
 
