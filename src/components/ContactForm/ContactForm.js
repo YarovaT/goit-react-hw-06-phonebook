@@ -4,9 +4,12 @@ import style from './ContactForm.module.css';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import { connect } from 'react-redux';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import contactsActions from '../../redux/contactsItems/contacts-actions';
 
-function ContactForm({ onSubmit }) {
+function ContactForm({ contacts, onSubmit }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -23,10 +26,25 @@ function ContactForm({ onSubmit }) {
     }
   };
 
-  const handleSubmit = e => {
+  const onSubmitHandler = e => {
     e.preventDefault();
 
+    if (e.currentTarget.name === '') {
+      toast.info('Fill in the input fields name and number!');
+      return;
+    }
+
+    if (
+      contacts.some(
+        contact => contact.name.toLowerCase() === name.toLowerCase(),
+      )
+    ) {
+      toast.warn(`${name} is already in phonebook !`);
+      return;
+    }
+
     onSubmit({ name, number });
+
     reset();
   };
 
@@ -36,7 +54,7 @@ function ContactForm({ onSubmit }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmitHandler}>
       <div className={style.formGroup}>
         <label>
           Name{' '}
@@ -72,9 +90,13 @@ function ContactForm({ onSubmit }) {
   );
 }
 
+const mapStateToProps = state => ({
+  contacts: state.contacts.items,
+});
+
 const mapDispatchToProps = dispatch => ({
   onSubmit: (name, number) =>
     dispatch(contactsActions.addContacts(name, number)),
 });
 
-export default connect(null, mapDispatchToProps)(ContactForm);
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
